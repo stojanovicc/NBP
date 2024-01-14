@@ -10,6 +10,6 @@ namespace SkiExplorer.Models
         public int Id { get; set; }
         public string Naziv { get; set; }
         public string Lokacija { get; set; }
-        //public List<Staza> Staze { get; set; } 
+
     }
 }

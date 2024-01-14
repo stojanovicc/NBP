@@ -11,6 +11,7 @@ namespace SkiExplorer.Models
         public int Id { get; set; }
         public string Naziv { get; set; }
         public string Opis { get; set; }
+
         public Skijaliste Skijaliste { get; set; }
     }
 }

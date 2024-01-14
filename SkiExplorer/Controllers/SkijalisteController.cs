@@ -95,6 +95,36 @@ namespace SkiExplorer.Controllers
             }
         }
 
+
+        [HttpPost("DodajListuStazaSkijalistu")]
+        public async Task<IActionResult> DodajListuStazaSkijalistu(int skijalisteId, [FromBody] List<int> stazeIds)
+        {
+            try
+            {
+                using (var session = _driver.AsyncSession())
+                {
+                    var query = @"MATCH (n:Skijaliste) WHERE ID(n)=$skiId
+                                  UNWIND $stazaIds AS sId
+                                  MATCH (m:Staza) WHERE ID(m) = sId
+                                  CREATE (n)-[:DISTRIBUTES]->(m)";
+
+                    var parameters = new
+                    {
+                        skiId = skijalisteId,
+                        stazIds = stazeIds
+                    };
+
+                    await session.RunAsync(query, parameters);
+                    return Ok("Uspesno dodate staze skijalistu.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
         [HttpPost("DodajAktivnostSkijalistu")]
         public async Task<IActionResult> DodajAktivnostSkijalistu(int aktivnostId, int skijalisteId)
         {
@@ -147,7 +177,7 @@ namespace SkiExplorer.Controllers
         {
             try
             {
-                using(var session = _driver.AsyncSession())
+                using (var session = _driver.AsyncSession())
                 {
                     var result = await session.ExecuteReadAsync(async tx =>
                     {
@@ -155,7 +185,7 @@ namespace SkiExplorer.Controllers
                         MATCH (s:Skijaliste)-[:DISTRIBUTES]->(k:Staza)
                         WHERE ID(s)=$sId
                         RETURN k";
-                        var cursor = await tx.RunAsync(query, new { sId = skijalisteId});
+                        var cursor = await tx.RunAsync(query, new { sId = skijalisteId });
                         var nodes = new List<INode>();
 
                         await cursor.ForEachAsync(record =>
@@ -169,7 +199,7 @@ namespace SkiExplorer.Controllers
                     return Ok(result);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -180,7 +210,7 @@ namespace SkiExplorer.Controllers
         {
             try
             {
-                using(var session = _driver.AsyncSession())
+                using (var session = _driver.AsyncSession())
                 {
                     var result = await session.ExecuteReadAsync(async tx =>
                     {
@@ -188,7 +218,7 @@ namespace SkiExplorer.Controllers
                         MATCH (s:Skijaliste)-[:DISTRIBUTES]->(k:Aktivnost)
                         WHERE ID(s)=$sId
                         RETURN k";
-                        var cursor = await tx.RunAsync(query, new { sId = skijalisteId});
+                        var cursor = await tx.RunAsync(query, new { sId = skijalisteId });
                         var nodes = new List<INode>();
 
                         await cursor.ForEachAsync(record =>
@@ -202,7 +232,7 @@ namespace SkiExplorer.Controllers
                     return Ok(result);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
