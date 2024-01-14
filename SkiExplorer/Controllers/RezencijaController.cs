@@ -55,16 +55,15 @@ namespace SkiExplorer.Controllers
             }
         }
 
-        //ne radi kako treba!
         [HttpGet("PreuzmiRecenzijeStaze/{nazivStaze}")]
-        public async Task<IActionResult> RecenzijeZaStazu(string nazivStaze)
+        public async Task<IActionResult> PreuzmiRecenzijeStaze(string nazivStaze)
         {
             try
             {
                 using (var session = _driver.AsyncSession())
                 {
-                    var query = @"MATCH (st:Staza {naziv: $nazivStaze})-[:ZA_STAZU]->(r:Recenzija)-[:OSTAVLJA]->(sk:Skijas)
-                                    RETURN sk, r";
+                    var query = @"MATCH (:Staza {naziv: $nazivStaze})-[:ZA_STAZU]->(r:Recenzija)<-[:OSTAVLJA]-(sk:Skijas)
+                                    RETURN r, sk";
 
                     var parameters = new
                     {
@@ -92,6 +91,7 @@ namespace SkiExplorer.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
 
     }
 }
