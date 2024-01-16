@@ -87,7 +87,7 @@ namespace SkiExplorer.Controllers
             {
                 using (var session = _driver.AsyncSession())
                 {
-                    var query = @"MATCH (s:Aktivnost) where ID(s)=$sId
+                    var query = @"MATCH (s:Aktivnost) where ID(s)=$aId
                                 OPTIONAL MATCH (s)-[r]-()
                                 DELETE r,s";
                     var parameters = new { aId = aktivnostId };

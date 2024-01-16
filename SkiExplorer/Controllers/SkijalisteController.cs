@@ -268,5 +268,43 @@ namespace SkiExplorer.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("PreuzmiSkijaliste")]
+        public async Task<IActionResult> PreuzmiSkijaliste(int skijalisteId)
+        {
+            try
+            {
+                using (var session = _driver.AsyncSession())
+                {
+                    var result = await session.ExecuteReadAsync(async tx =>
+                    {
+                        var query = "MATCH (s:Skijaliste) WHERE ID(s) = $skijalisteId RETURN s";
+                        var cursor = await tx.RunAsync(query, new { skijalisteId });
+                        var nodes = new List<INode>();
+
+                        await cursor.ForEachAsync(record =>
+                {
+                    var node = record["s"].As<INode>();
+                    var nodeId = node.Id;
+                    Console.WriteLine($"Found Skijaliste with ID: {nodeId}");
+                    nodes.Add(node);
+                });
+
+
+                        return nodes;
+                    });
+
+                    // Dodajte ispis rezultata u konzolu radi provere
+                    Console.WriteLine($"ID skijališta: {skijalisteId}, Broj rezultata: {result.Count}");
+
+                    return Ok(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
     }
 }

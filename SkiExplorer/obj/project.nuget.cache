@@ -1,8 +1,19 @@
 {
   "version": 2,
-  "dgSpecHash": "+nxTJ7707OtRjF3e7EPS8BcXDTz+igjixF7DHrb72ZZtNEAobWpUl/wHCyDVdRcyGPMTHIxb8o/W677VsEtcbA==",
+  "dgSpecHash": "166cMx1WoaGsYwZ0b7nmDwHdkzwgrnoqVLk1Tp4DaMmhWf0W86hZKJI1313Kk7f+5akv9de9wb8dDB0w+7ivhQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\PC\\Documents\\github IV godina\\NBP\\SkiExplorer\\SkiExplorer.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\ANASTASIJA\\Desktop\\Fakultet\\VII semestar\\Napredne baze podataka\\SkiExplorer\\SkiExplorer.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ANASTASIJA\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.0\\microsoft.aspnetcore.openapi.8.0.0.nupkg.sha512",
+    "C:\\Users\\ANASTASIJA\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\5.0.0\\microsoft.bcl.asyncinterfaces.5.0.0.nupkg.sha512",
+    "C:\\Users\\ANASTASIJA\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "C:\\Users\\ANASTASIJA\\.nuget\\packages\\microsoft.openapi\\1.4.3\\microsoft.openapi.1.4.3.nupkg.sha512",
+    "C:\\Users\\ANASTASIJA\\.nuget\\packages\\neo4j.driver\\5.15.0\\neo4j.driver.5.15.0.nupkg.sha512",
+    "C:\\Users\\ANASTASIJA\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
+    "C:\\Users\\ANASTASIJA\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
+    "C:\\Users\\ANASTASIJA\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
+    "C:\\Users\\ANASTASIJA\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.4.0\\swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512",
+    "C:\\Users\\ANASTASIJA\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
+  ],
   "logs": []
 }

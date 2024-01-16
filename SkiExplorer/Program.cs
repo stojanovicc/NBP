@@ -16,6 +16,19 @@ var driver = GraphDatabase.Driver("neo4j://localhost:7687", AuthTokens.Basic("ne
 // Register the IDriver instance for dependency injection
 builder.Services.AddSingleton<IDriver>(driver);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CORS", policy =>
+{
+    policy.AllowAnyHeader()
+          .AllowAnyMethod()
+          .AllowCredentials()
+          .WithOrigins("http://localhost:3000");
+});
+
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,9 +38,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseHttpsRedirection();
 
+app.UseCors("CORS");
+
 app.UseRouting();
+
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
