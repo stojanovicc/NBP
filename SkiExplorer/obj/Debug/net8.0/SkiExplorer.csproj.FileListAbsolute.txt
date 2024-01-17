@@ -74,3 +74,44 @@ C:\Users\PC\Documents\IV godina\VII\NBP\I i II faza\SkiExplorer\bin\Debug\net8.0
 C:\Users\PC\Documents\IV godina\VII\NBP\I i II faza\SkiExplorer\bin\Debug\net8.0\System.CodeDom.dll
 C:\Users\PC\Documents\IV godina\VII\NBP\I i II faza\SkiExplorer\bin\Debug\net8.0\System.Management.dll
 C:\Users\PC\Documents\IV godina\VII\NBP\I i II faza\SkiExplorer\bin\Debug\net8.0\runtimes\win\lib\netcoreapp2.0\System.Management.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\appsettings.json
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\SkiExplorer.exe
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\SkiExplorer.deps.json
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\SkiExplorer.runtimeconfig.json
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\SkiExplorer.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\SkiExplorer.pdb
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\Cassandra.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\K4os.Compression.LZ4.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\Microsoft.AspNetCore.OpenApi.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\Microsoft.OpenApi.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\Neo4j.Driver.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\System.CodeDom.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\System.Management.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\bin\Debug\net8.0\runtimes\win\lib\netcoreapp2.0\System.Management.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\SkiExplorer.csproj.AssemblyReference.cache
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\SkiExplorer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\SkiExplorer.AssemblyInfoInputs.cache
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\SkiExplorer.AssemblyInfo.cs
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\SkiExplorer.csproj.CoreCompileInputs.cache
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\SkiExplorer.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\SkiExplorer.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\staticwebassets\msbuild.SkiExplorer.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\staticwebassets\msbuild.build.SkiExplorer.props
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.SkiExplorer.props
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.SkiExplorer.props
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\staticwebassets.pack.json
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\scopedcss\bundle\SkiExplorer.styles.css
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\SkiExplorer.csproj.CopyComplete
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\SkiExplorer.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\refint\SkiExplorer.dll
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\SkiExplorer.pdb
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\SkiExplorer.genruntimeconfig.cache
+C:\Users\ANASTASIJA\Desktop\Fakultet\VII semestar\Napredne baze podataka\SkiExplorer\obj\Debug\net8.0\ref\SkiExplorer.dll

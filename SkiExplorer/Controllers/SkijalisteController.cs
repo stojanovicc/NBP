@@ -38,7 +38,7 @@ namespace SkiExplorer.Controllers
 
                     await session.RunAsync(query, parameters);
 
-                    var insertQuery = $"INSERT INTO Skijaliste (naziv, lokacija) VALUES (uuid(), '{skijaliste.Naziv}', '{skijaliste.Lokacija}')";
+                    var insertQuery = $"INSERT INTO Skijaliste (id, naziv, lokacija) VALUES (uuid(), '{skijaliste.Naziv}', '{skijaliste.Lokacija}')";
 
                     CassandraDB.Execute(insertQuery);
 
@@ -310,7 +310,75 @@ namespace SkiExplorer.Controllers
                 return BadRequest(ex.Message);
             }
         }
+      //preporuka staza na datom skijalistu
+        [HttpGet("PreporukaStaza")]
+        public async Task<IActionResult> PreporukaStaza(int skijalisteId, string skiingLevel)
+        {
+            try
+            {
+                using (var session = _driver.AsyncSession())
+                {
+                    var stazeNaSkijalistu = await PreuzmiSveStazeNaSkijalistu(skijalisteId);
 
+                    string tezina;
+
+                    switch (skiingLevel.ToLower())
+                    {
+                        case "nizak":
+                            tezina = "plava";
+                            break;
+                        case "srednji":
+                            tezina = "crvena";
+                            break;
+                        case "visok":
+                            tezina = "crna";
+                            break;
+                        default:
+                            return BadRequest("Nepoznat nivo skijanja");
+                        }
+
+                    var preporuceneStaze = stazeNaSkijalistu.Where(staza =>
+                        staza.Properties["tezina"].As<string>() == tezina).ToList();
+
+                    return Ok(preporuceneStaze);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        //pomocna funckija
+        private async Task<List<INode>> PreuzmiSveStazeNaSkijalistu(int skijalisteId)
+        {
+            using (var session = _driver.AsyncSession())
+            {
+                var result = await session.ExecuteReadAsync(async tx =>
+                {
+                    var query = @"
+                        MATCH (s:Skijaliste)-[:DISTRIBUTES]->(k:Staza)
+                        WHERE ID(s)=$sId
+                        RETURN k";
+                    var cursor = await tx.RunAsync(query, new { sId = skijalisteId });
+                    var nodes = new List<INode>();
+
+                    await cursor.ForEachAsync(record =>
+                    {
+                        var node = record["k"].As<INode>();
+                        var tezinaExists = node.Properties.TryGetValue("tezina", out var tezina);
+
+                        if (tezinaExists && tezina is string)
+                        {
+                            nodes.Add(node);
+                        }
+                    });
+
+                    return nodes;
+                });
+
+                return result;
+            }
+        }
 
     }
 }
