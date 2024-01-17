@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Neo4j.Driver;
+using Cassandra;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace SkiExplorer.Controllers
     public class SkijalisteController : ControllerBase
     {
         private readonly IDriver _driver;
+        public Cassandra.ISession CassandraDB { get; set; } = Cluster.Builder().AddContactPoint("127.0.0.1").WithPort(9042).Build().Connect("my_keyspace");
 
         public SkijalisteController(IDriver driver)
         {
@@ -26,7 +28,7 @@ namespace SkiExplorer.Controllers
             {
                 using (var session = _driver.AsyncSession())
                 {
-                    var query = @"CREATE (s:Skijaliste { naziv: $naziv, lokacija: $lokacija })";
+                    var query = @"CREATE (s:Skijaliste {naziv: $naziv, lokacija: $lokacija })";
 
                     var parameters = new
                     {
@@ -36,7 +38,11 @@ namespace SkiExplorer.Controllers
 
                     await session.RunAsync(query, parameters);
 
-                    return Ok("Uspesno");
+                    var insertQuery = $"INSERT INTO Skijaliste (naziv, lokacija) VALUES (uuid(), '{skijaliste.Naziv}', '{skijaliste.Lokacija}')";
+
+                    CassandraDB.Execute(insertQuery);
+
+                    return Ok("Uspesno dodavanje skijalista!");
                 }
             }
             catch (Exception ex)

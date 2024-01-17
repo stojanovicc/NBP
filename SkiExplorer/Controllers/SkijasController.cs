@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Neo4j.Driver;
+using Cassandra;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace SkiExplorer.Controllers
     public class SkijasController : ControllerBase
     {
         private readonly IDriver _driver;
+        public Cassandra.ISession CassandraDB { get; set; } = Cluster.Builder().AddContactPoint("127.0.0.1").WithPort(9042).Build().Connect("my_keyspace");
 
         public SkijasController(IDriver driver)
         {

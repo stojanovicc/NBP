@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Cassandra;
 using Neo4j.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,15 +17,25 @@ var driver = GraphDatabase.Driver("neo4j://localhost:7687", AuthTokens.Basic("ne
 // Register the IDriver instance for dependency injection
 builder.Services.AddSingleton<IDriver>(driver);
 
+// Konfiguracija Cassandra drajvera
+//var cassandraCluster = Cluster.Builder()
+//    .AddContactPoint("localhost") // Postavite svoju kontakt tačku
+//    .Build();
+
+//var cassandraSession = cassandraCluster.Connect("my_keyspace"); // Postavite ime ključnog prostora
+
+//// Registrujte ISession instancu za dependency injection
+//builder.Services.AddSingleton<Cassandra.ISession>(cassandraSession);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CORS", policy =>
-{
-    policy.AllowAnyHeader()
-          .AllowAnyMethod()
-          .AllowCredentials()
-          .WithOrigins("http://localhost:3000");
-});
+    {
+        policy.AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials()
+              .WithOrigins("http://localhost:3000");
+    });
 
 });
 
