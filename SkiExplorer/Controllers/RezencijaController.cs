@@ -22,40 +22,39 @@ namespace SkiExplorer.Controllers
             _driver = driver;
         }
 
-        [HttpPost("DodajRecenziju")]
-        public async Task<IActionResult> DodajRecenziju([FromBody] Recenzija recenzija)
-        {
-            try
-            {
-                using (var session = _driver.AsyncSession())
-                {
-                    var query = @"MATCH (sk:Skijas), (st:Staza)
-                                    WHERE ID(sk) = $skijasId AND ID(st) = $stazaId
-                                    CREATE (r:Recenzija {komentar: $komentar, ocena: $ocena})
-                                    MERGE (sk)-[:OSTAVLJA]->(r)
-                                    MERGE (st)-[:ZA_STAZU]->(r)
-                                    RETURN r";
+        // [HttpPost("DodajRecenziju")]
+        // public async Task<IActionResult> DodajRecenziju([FromBody] Recenzija recenzija)
+        // {
+        //     try
+        //     {
+        //         using (var session = _driver.AsyncSession())
+        //         {
+        //             var query = @"MATCH (sk:Skijas), (st:Staza)
+        //                             WHERE ID(sk) = $skijasId AND ID(st) = $stazaId
+        //                             CREATE (r:Recenzija {komentar: $komentar, ocena: $ocena})
+        //                             MERGE (sk)-[:OSTAVLJA]->(r)
+        //                             MERGE (st)-[:ZA_STAZU]->(r)
+        //                             RETURN r";
 
-                    var parameters = new
-                    {
-                        skijasId = recenzija.Skijas.Id,
-                        stazaId = recenzija.Staza.Id,
-                        komentar = recenzija.Komentar,
-                        ocena = recenzija.Ocena
-                    };
+        //             var parameters = new
+        //             {
+        //                 stazaId = recenzija.Staza.Id,
+        //                 komentar = recenzija.Komentar,
+        //                 ocena = recenzija.Ocena
+        //             };
 
-                    var result = await session.RunAsync(query, parameters);
+        //             var result = await session.RunAsync(query, parameters);
 
-                    var novaRecenzija = await result.SingleAsync();
+        //             var novaRecenzija = await result.SingleAsync();
 
-                    return Ok(novaRecenzija["r"].As<INode>().Properties);
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //             return Ok(novaRecenzija["r"].As<INode>().Properties);
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return BadRequest(ex.Message);
+        //     }
+        // }
 
         [HttpGet("PreuzmiRecenzijeStaze/{nazivStaze}")]
         public async Task<IActionResult> PreuzmiRecenzijeStaze(string nazivStaze)

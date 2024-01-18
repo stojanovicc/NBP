@@ -20,123 +20,181 @@ namespace SkiExplorer.Controllers
         {
             _driver = driver;
         }
-
+        //radi
         [HttpPost("DodajStazu")]
-        public async Task<IActionResult> DodajStazu(Staza staza)
+        public IActionResult DodajStazu([FromBody] Staza staza)
         {
             try
             {
-                using (var session = _driver.AsyncSession())
+                // Neo4j
+                using (var neo4jSession = _driver.AsyncSession())
                 {
-                    var query = @"
-                    CREATE (s:Staza 
-                    { 
-                        naziv: $naziv, 
-                        tezina: $tezina,
-                        duzina: $duzina
-                    })
-                    WITH s
-                    UNWIND $skijaliste AS skijalisteNaziv
-                    MERGE (p:Skijaliste {naziv: skijalisteNaziv})
-                    MERGE (p) - [:DISTRIBUTES] -> (s)";
-                    
-                                
+                    var neo4jQuery = @"
+                        CREATE (s:Staza 
+                        { 
+                            naziv: $naziv, 
+                            tezina: $tezina,
+                            duzina: $duzina
+                        })
+                        WITH s
+                        MERGE (p:Skijaliste {naziv: $skijalisteNaziv})
+                        SET p.lokacija = $lokacija
+                        MERGE (p) - [:DISTRIBUTES] -> (s)";
 
-                    var parameters = new
+                    var neo4jParameters = new
                     {
                         naziv = staza.Naziv,
                         tezina = staza.Tezina,
                         duzina = staza.Duzina,
-                        skijaliste = staza.Skijaliste.Naziv
+                        skijalisteNaziv = staza.Skijaliste?.Naziv,
+                        lokacija = staza.Skijaliste?.Lokacija
                     };
 
-                    await session.RunAsync(query, parameters);
-
-                    return Ok("Uspesno");
+                    neo4jSession.RunAsync(neo4jQuery, neo4jParameters);
                 }
+
+                // Cassandra
+                var cassandraQuery = @"
+                    INSERT INTO staza (naziv, tezina, duzina, skijaliste_naziv, lokacija) 
+                    VALUES (?, ?, ?, ?, ?)";
+
+                var cassandraParameters = new object[] { 
+                    staza.Naziv, 
+                    staza.Tezina, 
+                    staza.Duzina, 
+                    staza.Skijaliste?.Naziv, 
+                    staza.Skijaliste?.Lokacija 
+                };
+
+                var cassandraStatement = new SimpleStatement(cassandraQuery, cassandraParameters);
+                CassandraDB.Execute(cassandraStatement);
+
+                return Ok("Uspesno dodata staza.");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-
+        //radi
         [HttpPut("AzurirajStazu")]
-        public async Task<IActionResult> AzurirajStazu(string naziv, float tezina, float duzina)
+        public async Task<IActionResult> AzurirajStazu(string naziv, string tezina, float duzina)
         {
             try
             {
-                using (var session = _driver.AsyncSession())
+                // Neo4j
+                using (var neo4jSession = _driver.AsyncSession())
                 {
-                    var query = @"MATCH (n:Staza {naziv: $naziv}) 
-                                    SET n.naziv=$naziv 
-                                    SET n.tezina=$tezina
-                                    SET n.duzina=$duzina
-                                    return n";
-                    var parameters = new { naziv=naziv, 
-                                           tezina=tezina,
-                                           duzina=duzina};
-                    await session.RunAsync(query, parameters);
-                    return Ok("Uspesno ste azurirali podatke o stazi");
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+                    var neo4jQuery = @"
+                        MATCH (n:Staza {naziv: $naziv}) 
+                        SET n.tezina = $tezina
+                        SET n.duzina = $duzina
+                        RETURN n";
 
-
-        [HttpDelete("ObrisiStazu")]
-        public async Task<IActionResult> ObrisiStazu(int stazaId)
-        {
-            try
-            {
-                using (var session = _driver.AsyncSession())
-                {
-                    var query = @"MATCH (s:Staza) where ID(s)=$sId
-                                OPTIONAL MATCH (s)-[r]-()
-                                DELETE r,s";
-                    var parameters = new { sId = stazaId };
-                    await session.RunAsync(query, parameters);
-                    return Ok("Uspesno obrisana staza.");
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet("PreuzmiStaze")]
-        public async Task<IActionResult> PreuzmiStaze()
-        {
-            try
-            {
-                using (var session = _driver.AsyncSession())
-                {
-                    var result = await session.ExecuteReadAsync(async tx =>
+                    var neo4jParameters = new
                     {
-                        var query = "MATCH (s:Staza) RETURN s";
-                        var cursor = await tx.RunAsync(query);
-                        var nodes = new List<INode>();
+                        naziv = naziv,
+                        tezina = tezina,
+                        duzina = duzina
+                    };
 
-                        await cursor.ForEachAsync(record =>
-                        {
-                            var node = record["s"].As<INode>();
-                            nodes.Add(node);
-                        });
+                    var neo4jResult = await neo4jSession.RunAsync(neo4jQuery, neo4jParameters);
+                    var neo4jNodes = await neo4jResult.ToListAsync();
 
-                        return nodes;
-                    });
+                    var neo4jUpdatedNode = neo4jNodes.Select(record => record["n"].As<INode>()).SingleOrDefault();
 
-                    return Ok(result);
+                    if (neo4jUpdatedNode == null)
+                    {
+                        return NotFound($"Staza sa nazivom '{naziv}' nije pronađena u Neo4j bazi.");
+                    }
                 }
+
+                // Cassandra
+                var cassandraQuery = @"
+                    UPDATE staza
+                    SET tezina = ?, duzina = ? 
+                    WHERE naziv = ?";
+
+                var cassandraParameters = new object[] { tezina, duzina, naziv };
+                var cassandraStatement = new SimpleStatement(cassandraQuery, cassandraParameters);
+                CassandraDB.Execute(cassandraStatement);
+
+                return Ok($"Uspesno azurirani podaci o stazi sa nazivom '{naziv}'.");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
+        //radi
+        [HttpDelete("ObrisiStazu")]
+        public async Task<IActionResult> ObrisiStazu(string naziv)
+        {
+            try
+            {
+                // Neo4j
+                using (var neo4jSession = _driver.AsyncSession())
+                {
+                    var neo4jQuery = @"
+                        MATCH (s:Staza {naziv: $naziv})
+                        OPTIONAL MATCH (s)-[r]-()
+                        DELETE r, s";
+
+                    var neo4jParameters = new { naziv = naziv };
+                    await neo4jSession.RunAsync(neo4jQuery, neo4jParameters);
+                }
+
+                // Cassandra
+                var cassandraQuery = @"
+                    DELETE FROM staza
+                    WHERE naziv = ?";
+
+                var cassandraParameters = new object[] { naziv };
+                var cassandraStatement = new SimpleStatement(cassandraQuery, cassandraParameters);
+                CassandraDB.Execute(cassandraStatement);
+
+                return Ok($"Uspesno obrisana staza sa nazivom '{naziv}'.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        //radi
+        // [HttpGet("PreuzmiStaze")]
+        // public async Task<IActionResult> PreuzmiStaze()
+        // {
+        //     try
+        //     {
+        //         using (var session = _driver.AsyncSession())
+        //         {
+        //             var result = await session.ExecuteReadAsync(async tx =>
+        //             {
+        //                 var query = "MATCH (s:Staza) RETURN s";
+        //                 var cursor = await tx.RunAsync(query);
+        //                 var nodes = new List<INode>();
+
+        //                 await cursor.ForEachAsync(record =>
+        //                 {
+        //                     var node = record["s"].As<INode>();
+        //                     nodes.Add(node);
+        //                 });
+
+        //                 return nodes;
+        //             });
+
+        //             return Ok(result);
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return BadRequest(ex.Message);
+        //     }
+        // }
+
+
     }
 }

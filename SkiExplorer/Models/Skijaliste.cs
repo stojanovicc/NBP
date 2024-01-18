@@ -7,8 +7,8 @@ namespace SkiExplorer.Models
 {
     public class Skijaliste
     {
-        public string Naziv { get; set; }
-        public string Lokacija { get; set; }
+        public required string Naziv { get; set; }
+        public required string Lokacija { get; set; }
 
     }
 }

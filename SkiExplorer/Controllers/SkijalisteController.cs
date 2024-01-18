@@ -20,7 +20,7 @@ namespace SkiExplorer.Controllers
         {
             _driver = driver;
         }
-
+        //radi
         [HttpPost("DodajSkijaliste")]
         public async Task<IActionResult> DodajSkijaliste(Skijaliste skijaliste)
         {
@@ -51,192 +51,54 @@ namespace SkiExplorer.Controllers
             }
         }
 
+        //radi
         [HttpPut("AzurirajSkijaliste")]
         public async Task<IActionResult> AzurirajSkijaliste(string naziv, string lokacija)
         {
             try
             {
-                using (var session = _driver.AsyncSession())
+                // Neo4j
+                using (var neo4jSession = _driver.AsyncSession())
                 {
-                    var query = @"MATCH (n:Skijaliste {naziv: $naziv}) 
-                                    SET n.naziv=$naziv 
-                                    SET n.lokacija=$lokacija
-                                    return n";
-                    var parameters = new { 
-                                           naziv=naziv, 
-                                           lokacija=lokacija};
-                    await session.RunAsync(query, parameters);
-                    return Ok("Uspesno ste azurirali podatke o skijalistu");
+                    var neo4jQuery = @"MATCH (n:Skijaliste {naziv: $naziv}) 
+                                    SET n.naziv = $naziv, n.lokacija = $lokacija
+                                    RETURN n";
+                    var neo4jParameters = new { naziv = naziv, lokacija = lokacija };
+                    await neo4jSession.RunAsync(neo4jQuery, neo4jParameters);
                 }
+
+                // Cassandra
+                var cassandraQuery = "UPDATE skijaliste SET lokacija = ? WHERE naziv = ?";
+                var statement = new SimpleStatement(cassandraQuery, lokacija, naziv);
+                await CassandraDB.ExecuteAsync(statement);
+
+                return Ok("Uspesno ste azurirali podatke o skijalistu");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-
-        [HttpPost("DodajStazuSkijalistu")]
-        public async Task<IActionResult> DodajStazuSkijalistu(int stazaId, int skijalisteId)
+        //radi
+        [HttpDelete("ObrisiSkijaliste")] 
+        public async Task<IActionResult> ObrisiSkijaliste(string skijalisteNaziv)
         {
             try
             {
-                using (var session = _driver.AsyncSession())
+                using (var neo4jSession = _driver.AsyncSession())
                 {
-                    var query = @"MATCH (n:Skijaliste) WHERE ID(n)=$skiId
-                                MATCH (m:Staza) WHERE ID(m)=$sId
-                                CREATE (n)-[:DISTRIBUTES]->(m)";
-
-                    var parameters = new
-                    {
-                        sId = stazaId,
-                        skiId = skijalisteId
-                    };
-                    await session.RunAsync(query, parameters);
-                    return Ok("Uspesno dodata staza u skijaliste.");
+                    var neo4jQuery = @"MATCH (s:Skijaliste {naziv: $naziv})
+                                    OPTIONAL MATCH (s)-[r]-()
+                                    DELETE r, s";
+                    var neo4jParameters = new { naziv = skijalisteNaziv };
+                    await neo4jSession.RunAsync(neo4jQuery, neo4jParameters);
                 }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
 
+                var cassandraQuery = $"DELETE FROM skijaliste WHERE naziv = ?";
+                var statement = new SimpleStatement(cassandraQuery, skijalisteNaziv);
+                await CassandraDB.ExecuteAsync(statement);
 
-        [HttpPost("DodajListuStazaSkijalistu")]
-        public async Task<IActionResult> DodajListuStazaSkijalistu(int skijalisteId, [FromBody] List<int> stazeIds)
-        {
-            try
-            {
-                using (var session = _driver.AsyncSession())
-                {
-                    var query = @"MATCH (n:Skijaliste) WHERE ID(n)=$skiId
-                                  UNWIND $stazaIds AS sId
-                                  MATCH (m:Staza) WHERE ID(m) = sId
-                                  CREATE (n)-[:DISTRIBUTES]->(m)";
-
-                    var parameters = new
-                    {
-                        skiId = skijalisteId,
-                        stazIds = stazeIds
-                    };
-
-                    await session.RunAsync(query, parameters);
-                    return Ok("Uspesno dodate staze skijalistu.");
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-
-        [HttpPost("DodajAktivnostSkijalistu")]
-        public async Task<IActionResult> DodajAktivnostSkijalistu(int aktivnostId, int skijalisteId)
-        {
-            try
-            {
-                using (var session = _driver.AsyncSession())
-                {
-                    var query = @"MATCH (n:Skijaliste) WHERE ID(n)=$skiId
-                                MATCH (m:Aktivnost) WHERE ID(m)=$sId
-                                CREATE (n)-[:DISTRIBUTES]->(m)";
-
-                    var parameters = new
-                    {
-                        sId = aktivnostId,
-                        skiId = skijalisteId
-                    };
-                    await session.RunAsync(query, parameters);
-                    return Ok("Uspesno dodata aktivnost u skijaliste.");
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpDelete("ObrisiSkijaliste")]
-        public async Task<IActionResult> ObrisiSkijaliste(int skijalisteId)
-        {
-            try
-            {
-                using (var session = _driver.AsyncSession())
-                {
-                    var query = @"MATCH (s:Skijaliste) where ID(s)=$sId
-                                OPTIONAL MATCH (s)-[r]-()
-                                DELETE r,s";
-                    var parameters = new { sId = skijalisteId };
-                    await session.RunAsync(query, parameters);
-                    return Ok("Uspesno obrisano skijaliste.");
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet("PreuzmiStazeSkijalista")]
-        public async Task<IActionResult> PreuzmiStazeSkijalista(int skijalisteId)
-        {
-            try
-            {
-                using (var session = _driver.AsyncSession())
-                {
-                    var result = await session.ExecuteReadAsync(async tx =>
-                    {
-                        var query = @"
-                        MATCH (s:Skijaliste)-[:DISTRIBUTES]->(k:Staza)
-                        WHERE ID(s)=$sId
-                        RETURN k";
-                        var cursor = await tx.RunAsync(query, new { sId = skijalisteId });
-                        var nodes = new List<INode>();
-
-                        await cursor.ForEachAsync(record =>
-                        {
-                            var node = record["k"].As<INode>();
-                            nodes.Add(node);
-                        });
-
-                        return nodes;
-                    });
-                    return Ok(result);
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet("PreuzmiAktivnostiSkijalista")]
-        public async Task<IActionResult> PreuzmiAktivnostiSkijalista(int skijalisteId)
-        {
-            try
-            {
-                using (var session = _driver.AsyncSession())
-                {
-                    var result = await session.ExecuteReadAsync(async tx =>
-                    {
-                        var query = @"
-                        MATCH (s:Skijaliste)-[:DISTRIBUTES]->(k:Aktivnost)
-                        WHERE ID(s)=$sId
-                        RETURN k";
-                        var cursor = await tx.RunAsync(query, new { sId = skijalisteId });
-                        var nodes = new List<INode>();
-
-                        await cursor.ForEachAsync(record =>
-                        {
-                            var node = record["k"].As<INode>();
-                            nodes.Add(node);
-                        });
-
-                        return nodes;
-                    });
-                    return Ok(result);
-                }
+                return Ok("Uspesno obrisano skijaliste.");
             }
             catch (Exception ex)
             {
@@ -274,8 +136,44 @@ namespace SkiExplorer.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("PreuzmiSkijaliste")]
-        public async Task<IActionResult> PreuzmiSkijaliste(int skijalisteId)
+        ///////////////////
+       
+        // [HttpGet("PreuzmiStazeSkijalista")]
+        // public async Task<IActionResult> PreuzmiStazeSkijalista(int skijalisteId)
+        // {
+        //     try
+        //     {
+        //         using (var session = _driver.AsyncSession())
+        //         {
+        //             var result = await session.ExecuteReadAsync(async tx =>
+        //             {
+        //                 var query = @"
+        //                 MATCH (s:Skijaliste)-[:DISTRIBUTES]->(k:Staza)
+        //                 WHERE ID(s)=$sId
+        //                 RETURN k";
+        //                 var cursor = await tx.RunAsync(query, new { sId = skijalisteId });
+        //                 var nodes = new List<INode>();
+
+        //                 await cursor.ForEachAsync(record =>
+        //                 {
+        //                     var node = record["k"].As<INode>();
+        //                     nodes.Add(node);
+        //                 });
+
+        //                 return nodes;
+        //             });
+        //             return Ok(result);
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return BadRequest(ex.Message);
+        //     }
+        // }
+
+        //radi
+        [HttpGet("PreuzmiStazeSkijalista")]//po nazivu
+        public async Task<IActionResult> PreuzmiStazeSkijalista(string nazivSkijalista)
         {
             try
             {
@@ -283,24 +181,21 @@ namespace SkiExplorer.Controllers
                 {
                     var result = await session.ExecuteReadAsync(async tx =>
                     {
-                        var query = "MATCH (s:Skijaliste) WHERE ID(s) = $skijalisteId RETURN s";
-                        var cursor = await tx.RunAsync(query, new { skijalisteId });
+                        var query = @"
+                            MATCH (s:Skijaliste {naziv: $nazivSkijalista})-[:DISTRIBUTES]->(k:Staza)
+                            RETURN k";
+
+                        var cursor = await tx.RunAsync(query, new { nazivSkijalista = nazivSkijalista });
                         var nodes = new List<INode>();
 
                         await cursor.ForEachAsync(record =>
-                {
-                    var node = record["s"].As<INode>();
-                    var nodeId = node.Id;
-                    Console.WriteLine($"Found Skijaliste with ID: {nodeId}");
-                    nodes.Add(node);
-                });
-
+                        {
+                            var node = record["k"].As<INode>();
+                            nodes.Add(node);
+                        });
 
                         return nodes;
                     });
-
-                    // Dodajte ispis rezultata u konzolu radi provere
-                    Console.WriteLine($"ID skijališta: {skijalisteId}, Broj rezultata: {result.Count}");
 
                     return Ok(result);
                 }
@@ -310,15 +205,154 @@ namespace SkiExplorer.Controllers
                 return BadRequest(ex.Message);
             }
         }
-      //preporuka staza na datom skijalistu
-        [HttpGet("PreporukaStaza")]
-        public async Task<IActionResult> PreporukaStaza(int skijalisteId, string skiingLevel)
+
+
+        // [HttpGet("PreuzmiAktivnostiSkijalista")]
+        // public async Task<IActionResult> PreuzmiAktivnostiSkijalista(int skijalisteId)
+        // {
+        //     try
+        //     {
+        //         using (var session = _driver.AsyncSession())
+        //         {
+        //             var result = await session.ExecuteReadAsync(async tx =>
+        //             {
+        //                 var query = @"
+        //                 MATCH (s:Skijaliste)-[:DISTRIBUTES]->(k:Aktivnost)
+        //                 WHERE ID(s)=$sId
+        //                 RETURN k";
+        //                 var cursor = await tx.RunAsync(query, new { sId = skijalisteId });
+        //                 var nodes = new List<INode>();
+
+        //                 await cursor.ForEachAsync(record =>
+        //                 {
+        //                     var node = record["k"].As<INode>();
+        //                     nodes.Add(node);
+        //                 });
+
+        //                 return nodes;
+        //             });
+        //             return Ok(result);
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return BadRequest(ex.Message);
+        //     }
+        // }
+
+        //radi
+        [HttpGet("PreuzmiAktivnostiSkijalista")]
+        public async Task<IActionResult> PreuzmiAktivnostiSkijalista(string nazivSkijalista)
         {
             try
             {
                 using (var session = _driver.AsyncSession())
                 {
-                    var stazeNaSkijalistu = await PreuzmiSveStazeNaSkijalistu(skijalisteId);
+                    var result = await session.ExecuteReadAsync(async tx =>
+                    {
+                        var query = @"
+                            MATCH (s:Skijaliste {naziv: $nazivSkijalista})-[:DISTRIBUTES]->(k:Aktivnost)
+                            RETURN k";
+
+                        var cursor = await tx.RunAsync(query, new { nazivSkijalista = nazivSkijalista });
+                        var nodes = new List<INode>();
+
+                        await cursor.ForEachAsync(record =>
+                        {
+                            var node = record["k"].As<INode>();
+                            nodes.Add(node);
+                        });
+
+                        return nodes;
+                    });
+
+                    return Ok(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // [HttpGet("PreuzmiSkijaliste")]
+        // public async Task<IActionResult> PreuzmiSkijaliste(int skijalisteId)
+        // {
+        //     try
+        //     {
+        //         using (var session = _driver.AsyncSession())
+        //         {
+        //             var result = await session.ExecuteReadAsync(async tx =>
+        //             {
+        //                 var query = "MATCH (s:Skijaliste) WHERE ID(s) = $skijalisteId RETURN s";
+        //                 var cursor = await tx.RunAsync(query, new { skijalisteId });
+        //                 var nodes = new List<INode>();
+
+        //                 await cursor.ForEachAsync(record =>
+        //         {
+        //             var node = record["s"].As<INode>();
+        //             var nodeId = node.Id;
+        //             Console.WriteLine($"Found Skijaliste with ID: {nodeId}");
+        //             nodes.Add(node);
+        //         });
+
+
+        //                 return nodes;
+        //             });
+        //             Console.WriteLine($"ID skijališta: {skijalisteId}, Broj rezultata: {result.Count}");
+
+        //             return Ok(result);
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return BadRequest(ex.Message);
+        //     }
+        // }
+        //radi
+        [HttpGet("PreuzmiSkijaliste")]
+        public async Task<IActionResult> PreuzmiSkijaliste(string nazivSkijalista)
+        {
+            try
+            {
+                using (var session = _driver.AsyncSession())
+                {
+                    var result = await session.ExecuteReadAsync(async tx =>
+                    {
+                        var query = "MATCH (s:Skijaliste {naziv: $nazivSkijalista}) RETURN s";
+                        var cursor = await tx.RunAsync(query, new { nazivSkijalista });
+                        var nodes = new List<INode>();
+
+                        await cursor.ForEachAsync(record =>
+                        {
+                            var node = record["s"].As<INode>();
+                            var nodeId = node.Id;
+                            Console.WriteLine($"Found Skijaliste with ID: {nodeId}");
+                            nodes.Add(node);
+                        });
+
+                        return nodes;
+                    });
+
+                    Console.WriteLine($"Naziv skijališta: {nazivSkijalista}, Broj rezultata: {result.Count}");
+
+                    return Ok(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("PreporukaStaza")]
+        public async Task<IActionResult> PreporukaStaza(string nazivSkijalista, string skiingLevel)
+        {
+            try
+            {
+                using (var session = _driver.AsyncSession())
+                {
+                    var stazeNaSkijalistu = await PreuzmiSveStazeNaSkijalistu(nazivSkijalista);
 
                     string tezina;
 
@@ -335,7 +369,7 @@ namespace SkiExplorer.Controllers
                             break;
                         default:
                             return BadRequest("Nepoznat nivo skijanja");
-                        }
+                    }
 
                     var preporuceneStaze = stazeNaSkijalistu.Where(staza =>
                         staza.Properties["tezina"].As<string>() == tezina).ToList();
@@ -348,18 +382,18 @@ namespace SkiExplorer.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        //pomocna funckija
-        private async Task<List<INode>> PreuzmiSveStazeNaSkijalistu(int skijalisteId)
+        
+        private async Task<List<INode>> PreuzmiSveStazeNaSkijalistu(string nazivSkijalista)
         {
             using (var session = _driver.AsyncSession())
             {
                 var result = await session.ExecuteReadAsync(async tx =>
                 {
                     var query = @"
-                        MATCH (s:Skijaliste)-[:DISTRIBUTES]->(k:Staza)
-                        WHERE ID(s)=$sId
+                        MATCH (s:Skijaliste {naziv: $nazivSkijalista})-[:DISTRIBUTES]->(k:Staza)
                         RETURN k";
-                    var cursor = await tx.RunAsync(query, new { sId = skijalisteId });
+
+                    var cursor = await tx.RunAsync(query, new { nazivSkijalista });
                     var nodes = new List<INode>();
 
                     await cursor.ForEachAsync(record =>
@@ -379,6 +413,5 @@ namespace SkiExplorer.Controllers
                 return result;
             }
         }
-
     }
 }

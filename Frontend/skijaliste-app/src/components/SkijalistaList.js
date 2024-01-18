@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Typography, Grid, Paper, Button, TextField, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-
 const SkijalistaList = () => {
   const [skijalista, setSkijalista] = useState([]);
   const [formData, setFormData] = useState({ naziv: '', lokacija: '' });
   const navigate = useNavigate(); 
-
 
   useEffect(() => {
     fetchData();
@@ -38,9 +36,7 @@ const SkijalistaList = () => {
       });
 
       if (response.ok) {
-        // Ako je dodavanje uspešno, osveži listu skijališta
         fetchData();
-        // Resetuj formu
         setFormData({ naziv: '', lokacija: '' });
       } else {
         console.error('Error adding skijalište:', response.statusText);
@@ -50,14 +46,13 @@ const SkijalistaList = () => {
     }
   };
 
-  const handleObrisiClick = async (skijalisteId) => {
+  const handleObrisiClick = async (skijalisteNaziv) => {
     try {
-      const response = await fetch(`http://localhost:5030/api/Skijaliste/ObrisiSkijaliste?skijalisteId=${skijalisteId}`, {
+      const response = await fetch(`http://localhost:5030/api/Skijaliste/ObrisiSkijaliste?skijalisteNaziv=${skijalisteNaziv}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
-        // Ako je brisanje uspešno, osveži listu skijališta
         fetchData();
       } else {
         console.error('Error deleting skijalište:', response.statusText);
@@ -120,23 +115,20 @@ const SkijalistaList = () => {
                   Lokacija: {skijaliste.properties.lokacija}
                 </Typography>
                 <Divider />
-
                 <Button
                   variant="outlined"
                   color="secondary"
-                  onClick={() => handleObrisiClick(skijaliste.id)}
+                  onClick={() => handleObrisiClick(skijaliste.properties.naziv)}
                 >
                   Obriši
                 </Button>
                 <Button
                   variant="outlined"
                   color="primary"
-                  onClick={() => navigate(`/Skijaliste/${skijaliste.id}`)}
+                  onClick={() => navigate(`/Skijaliste/${skijaliste.properties.naziv}`)}
                 >
                   PREGLED SKIJALISTA
                 </Button>
-
-
               </CardContent>
             </Card>
           </Grid>
@@ -147,5 +139,4 @@ const SkijalistaList = () => {
 };
 
 export default SkijalistaList;
-
 
