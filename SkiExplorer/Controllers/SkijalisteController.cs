@@ -38,7 +38,7 @@ namespace SkiExplorer.Controllers
 
                     await session.RunAsync(query, parameters);
 
-                    var insertQuery = $"INSERT INTO Skijaliste (id, naziv, lokacija) VALUES (uuid(), '{skijaliste.Naziv}', '{skijaliste.Lokacija}')";
+                    var insertQuery = $"INSERT INTO Skijaliste (naziv, lokacija) VALUES ('{skijaliste.Naziv}', '{skijaliste.Lokacija}')";
 
                     CassandraDB.Execute(insertQuery);
 
