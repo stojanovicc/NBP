@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Typography, Grid, Paper, Button, TextField, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import Aktivnost from './Aktivnost';
 
 const SkijalistaList = () => {
   const [skijalista, setSkijalista] = useState([]);
@@ -127,10 +128,17 @@ const SkijalistaList = () => {
               >
                 {isEditing ? 'Sačuvaj izmene' : 'Dodaj'}
               </Button>
+
+              <Typography variant="h6" sx={{ marginTop: '25px' }} gutterBottom>
+              <Divider>Aktivnosti na skijalistu</Divider>
+                <Aktivnost/>
+            </Typography>
             </form>
           </CardContent>
         </Paper>
       </Grid>
+
+      
 
       {skijalista.length === 0 ? (
         <Grid item xs={12}>
