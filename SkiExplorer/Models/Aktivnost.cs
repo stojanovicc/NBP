@@ -8,9 +8,10 @@ namespace SkiExplorer.Models
 {
     public class Aktivnost
     {
-        public int Id { get; set; }
         public string Naziv { get; set; }
         public string Opis { get; set; }
+        public float Cena { get; set; }
+
 
         public Skijaliste Skijaliste { get; set; }
     }

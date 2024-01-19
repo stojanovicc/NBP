@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Neo4j.Driver;
 using Cassandra;
 using System;
@@ -32,25 +32,31 @@ namespace SkiExplorer.Controllers
                     CREATE (s:Aktivnost 
                     { 
                         naziv: $naziv,
-                        opis: $opis
+                        opis: $opis,
+                        cena: $cena
                     })
                     WITH s
                     UNWIND $skijaliste AS skijalisteNaziv
                     MERGE (p:Skijaliste {naziv: skijalisteNaziv})
-                    MERGE (p) - [:DISTRIBUTES] -> (s)";
-                    
-                                
+                    MERGE (p) - [:NA] -> (s)";    
 
                     var parameters = new
                     {
-                        naziv=aktivnost.Naziv,
+                        naziv = aktivnost.Naziv,
                         opis = aktivnost.Opis,
+                        cena = aktivnost.Cena,
                         skijaliste = aktivnost.Skijaliste.Naziv
                     };
 
                     await session.RunAsync(query, parameters);
 
-                    return Ok("Uspesno");
+                    var insertQuery = $@"INSERT INTO Aktivnost (naziv, opis, cena, skijaliste) 
+                                            VALUES 
+                                        ('{aktivnost.Naziv}', '{aktivnost.Opis}', {aktivnost.Cena}, '{aktivnost.Skijaliste.Naziv}')";
+
+                    CassandraDB.Execute(insertQuery);
+
+                    return Ok("Uspesno dodavanje aktivnosti!");
                 }
             }
             catch (Exception ex)
@@ -60,20 +66,16 @@ namespace SkiExplorer.Controllers
         }
 
         [HttpPut("AzurirajAktivnost")]
-        public async Task<IActionResult> AzurirajAktivnost(string naziv, string opis)
+        public async Task<IActionResult> AzurirajAktivnost(string naziv, string skijaliste, string opis, float cena)
         {
             try
             {
-                using (var session = _driver.AsyncSession())
-                {
-                    var query = @"MATCH (n:Aktivnost {naziv: $naziv}) 
-                                    SET n.opis=$opis 
-                                    return n";
-                    var parameters = new { naziv=naziv, 
-                                           opis=opis};
-                    await session.RunAsync(query, parameters);
-                    return Ok("Uspesno ste azurirali podatke o aktivnosti");
-                }
+                var updateQuery = "UPDATE Aktivnost SET opis = ?, cena = ? WHERE naziv = ? AND skijaliste = ?";
+                var statement = new SimpleStatement(updateQuery, opis, cena, naziv, skijaliste);
+
+                await CassandraDB.ExecuteAsync(statement);
+
+                return Ok("Uspesno azuriranje aktivnosti!");
             }
             catch (Exception ex)
             {
@@ -83,18 +85,17 @@ namespace SkiExplorer.Controllers
 
 
         [HttpDelete("ObrisiAktivnost")]
-        public async Task<IActionResult> ObrisiAktivnost(int aktivnostId)
+        public async Task<IActionResult> ObrisiAktivnost(string naziv, string skijaliste)
         {
             try
             {
                 using (var session = _driver.AsyncSession())
                 {
-                    var query = @"MATCH (s:Aktivnost) where ID(s)=$aId
-                                OPTIONAL MATCH (s)-[r]-()
-                                DELETE r,s";
-                    var parameters = new { aId = aktivnostId };
-                    await session.RunAsync(query, parameters);
-                    return Ok("Uspesno obrisana aktivnost.");
+                    var deleteQuery = $"DELETE FROM Aktivnost WHERE skijaliste = ? AND naziv = ?";
+                    var statement = new SimpleStatement(deleteQuery, skijaliste, naziv);
+                    await CassandraDB.ExecuteAsync(statement);
+
+                    return Ok("Uspesno brisanje aktivnosti!");
                 }
             }
             catch (Exception ex)
@@ -103,29 +104,37 @@ namespace SkiExplorer.Controllers
             }
         }
 
-        [HttpGet("PreuzmiAktivnosti")]
-        public async Task<IActionResult> PreuzmiAktivnosti()
+        [HttpGet("PreuzmiAktivnostiNaSkijalistu")]
+        public async Task<IActionResult> PreuzmiAktivnostiNaSkijalistu(string skijaliste, string naziv)
         {
             try
             {
                 using (var session = _driver.AsyncSession())
                 {
-                    var result = await session.ExecuteReadAsync(async tx =>
+                    var selectQuery = $@"SELECT * FROM Aktivnost WHERE skijaliste = ? AND naziv = ?";
+                    var statement = new SimpleStatement(selectQuery, skijaliste, naziv);
+                    var result = await CassandraDB.ExecuteAsync(statement);
+
+                    var row = result.FirstOrDefault();
+                    if (row != null)
                     {
-                        var query = "MATCH (s:Aktivnost) RETURN s";
-                        var cursor = await tx.RunAsync(query);
-                        var nodes = new List<INode>();
+                        var opis = row.GetValue<string>("opis");
+                        var cena = row.GetValue<float>("cena");
 
-                        await cursor.ForEachAsync(record =>
+                        var aktivnost = new Aktivnost
                         {
-                            var node = record["s"].As<INode>();
-                            nodes.Add(node);
-                        });
+                            //Skijaliste = skijaliste,
+                            Naziv = naziv,
+                            Opis = opis,
+                            Cena = cena,
+                        };
 
-                        return nodes;
-                    });
-
-                    return Ok(result);
+                        return Ok(aktivnost);
+                    }
+                    else
+                    {
+                        return NotFound("Aktivnost nije pronađena.");
+                    }
                 }
             }
             catch (Exception ex)
@@ -133,8 +142,6 @@ namespace SkiExplorer.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
     }
 
 }
