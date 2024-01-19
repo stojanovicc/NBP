@@ -1,394 +1,3 @@
-// import React, { useEffect, useState } from 'react';
-// import { useParams, Link, useNavigate } from 'react-router-dom';
-// import {
-//   Typography,
-//   List,
-//   ListItem,
-//   ListItemText,
-//   Paper,
-//   Button,
-//   Divider,
-//   Dialog,
-//   DialogTitle,
-//   DialogContent,
-//   TextField,
-//   DialogActions,
-// } from '@mui/material';
-
-// const Staze = () => {
-//   const { id } = useParams();
-//   const navigate = useNavigate();
-//   const [staze, setStaze] = useState([]);
-//   const [aktivnosti, setAktivnosti] = useState([]);
-//   const [openDialog, setOpenDialog] = useState(false);
-//   const [openAktivnostDialog, setOpenAktivnostDialog] = useState(false);
-//   const [novaStaza, setNovaStaza] = useState({ naziv: '', tezina: '', duzina: '' });
-//   const [novaAktivnost, setNovaAktivnost] = useState({ naziv: '', opis: '' });
-//   const [trenutnoSkijaliste, setTrenutnoSkijaliste] = useState({ naziv: 'N/A', lokacija: 'N/A' });
-//   const [nazivSkijalista, setNazivSkijalista] = useState('');
-//   //
-//   const [showRecommendationForm, setShowRecommendationForm] = useState(false);
-//   const [skiingLevel, setSkiingLevel] = useState('');
-//   const [recommendedStaza, setRecommendedStaza] = useState(null);
-
-
-// const handleOpenRecommendationForm = () => {
-//   setShowRecommendationForm(true);
-//   setRecommendedStaza(null); // Clear previous recommendation when opening the form
-// };
-
-// const handleCloseRecommendationForm = () => {
-//   setShowRecommendationForm(false);
-//   setSkiingLevel('');
-// };
-
-// const handleSkiingLevelChange = (e) => {
-//   setSkiingLevel(e.target.value);
-// };
-
-// const handleRecommendStaza = async () => {
-//   try {
-//     const response = await fetch(
-//       `http://localhost:5030/api/Skijaliste/PreporukaStaza?skijalisteId=${id}&skiingLevel=${skiingLevel}`
-//     );
-
-//     if (response.ok) {
-//       const data = await response.json();
-//       setRecommendedStaza(data[0]?.properties || null);
-//       setShowRecommendationForm(false); // Hide the form after successful recommendation
-//     } else {
-//       console.error('Error fetching recommendation:', response.statusText);
-//     }
-//   } catch (error) {
-//     console.error('Error fetching recommendation:', error);
-//   }
-// };
-
-
-//   useEffect(() => {
-//     fetchData();
-//     fetchSkijalisteData();
-//     fetchAktivnostiData();
-//   }, [id]);
-
-//   const fetchData = async () => {
-//     try {
-//       const response = await fetch(`http://localhost:5030/api/Skijaliste/PreuzmiStazeSkijalista?skijalisteId=${id}`);
-//       if (!response.ok) {
-//         throw new Error(`Error fetching data. Status: ${response.status}`);
-//       }
-
-//       const data = await response.json();
-//       setStaze(data);
-//     } catch (error) {
-//       console.error('Error fetching data:', error);
-//     }
-//   };
-
-//   const fetchSkijalisteData = async () => {
-//     try {
-//       const response = await fetch(`http://localhost:5030/api/Skijaliste/PreuzmiSkijaliste?skijalisteId=${id}`);
-//       if (!response.ok) {
-//         throw new Error(`Error fetching skijaliste data. Status: ${response.status}`);
-//       }
-
-//       const skijalisteData = await response.json();
-//       const skijaliste = skijalisteData.find((sk) => sk.id === parseInt(id));
-
-//       if (skijaliste) {
-//         setTrenutnoSkijaliste({
-//           naziv: skijaliste.properties.naziv || 'N/A',
-//           lokacija: skijaliste.properties.lokacija || 'N/A',
-//         });
-//       }
-//     } catch (error) {
-//       console.error('Error fetching skijaliste data:', error);
-//     }
-//   };
-
-//   const fetchAktivnostiData = async () => {
-//     try {
-//       const response = await fetch(`http://localhost:5030/api/Skijaliste/PreuzmiAktivnostiSkijalista?skijalisteId=${id}`);
-//       if (!response.ok) {
-//         throw new Error(`Error fetching aktivnosti data. Status: ${response.status}`);
-//       }
-
-//       const aktivnostiData = await response.json();
-//       setAktivnosti(aktivnostiData);
-//     } catch (error) {
-//       console.error('Error fetching aktivnosti data:', error);
-//     }
-//   };
-// //
-
-//   const handleOpenDialog = () => {
-//     fetchSkijalisteData();
-//     setOpenDialog(true);
-//   };
-
-//   const handleCloseDialog = () => {
-//     setOpenDialog(false);
-//   };
-
-//   const handleInputChange = (e) => {
-//     setNovaStaza({ ...novaStaza, [e.target.name]: e.target.value });
-//   };
-
-//   const handleDodajStazu = async () => {
-//     try {
-//       const response = await fetch(`http://localhost:5030/api/Staza/DodajStazu`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//           ...novaStaza,
-//           skijaliste: {
-//             naziv: trenutnoSkijaliste.naziv,
-//             lokacija: trenutnoSkijaliste.lokacija,
-//           },
-//         }),
-//       });
-
-//       if (response.ok) {
-//         console.log('Staza uspešno dodata');
-//         fetchData();
-//         handleCloseDialog();
-//         setNovaStaza({ naziv: '', tezina: '', duzina: '' });
-//       } else {
-//         console.error('Error adding staza:', response.statusText);
-//       }
-//     } catch (error) {
-//       console.error('Error adding staza:', error);
-//     }
-//   };
-
-//   const handleObrisiStazu = async (stazaId) => {
-//     try {
-//       const response = await fetch(`http://localhost:5030/api/Staza/ObrisiStazu?stazaId=${stazaId}`, {
-//         method: 'DELETE',
-//       });
-
-//       if (response.ok) {
-//         console.log('Staza uspešno obrisana');
-//         fetchData();
-//       } else {
-//         console.error('Error deleting staza:', response.statusText);
-//       }
-//     } catch (error) {
-//       console.error('Error deleting staza:', error);
-//     }
-//   };
-
-//   const handlePregledStaze = (stazaId) => {
-//     navigate(`/Staza/${stazaId}`);
-//   };
-
-//   const handleObrisiAktivnost = async (aktivnostId) => {
-//     try {
-//       const response = await fetch(`http://localhost:5030/api/Aktivnosti/ObrisiAktivnost?aktivnostId=${aktivnostId}`, {
-//         method: 'DELETE',
-//       });
-
-//       if (response.ok) {
-//         console.log('Aktivnost uspešno obrisana');
-//         fetchAktivnostiData();
-//       } else {
-//         console.error('Error deleting aktivnost:', response.statusText);
-//       }
-//     } catch (error) {
-//       console.error('Error deleting aktivnost:', error);
-//     }
-//   };
-
-//   const handleOpenAktivnostDialog = () => {
-//     setOpenAktivnostDialog(true);
-//   };
-
-//   const handleCloseAktivnostDialog = () => {
-//     setOpenAktivnostDialog(false);
-//   };
-
-//   const handleAktivnostInputChange = (e) => {
-//     setNovaAktivnost({ ...novaAktivnost, [e.target.name]: e.target.value });
-//   };
-
-//   const handleDodajAktivnost = async () => {
-//     try {
-//       const response = await fetch(`http://localhost:5030/api/Aktivnosti/DodajAktivnost`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//           ...novaAktivnost,
-//           skijaliste: {
-//             naziv: trenutnoSkijaliste.naziv,
-//             lokacija: trenutnoSkijaliste.lokacija,
-//           },
-//         }),
-//       });
-
-//       if (response.ok) {
-//         console.log('Aktivnost uspešno dodata');
-//         fetchAktivnostiData();
-//         handleCloseAktivnostDialog();
-//         setNovaAktivnost({ naziv: '', opis: '' });
-//       } else {
-//         console.error('Error adding aktivnost:', response.statusText);
-//       }
-//     } catch (error) {
-//       console.error('Error adding aktivnost:', error);
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <Typography variant="h6" sx={{ marginTop: '25px' }} gutterBottom>
-//         <Divider>Lista staza</Divider>
-//       </Typography>
-//       <Divider />
-//       <List>
-//         {staze.map((staza) => (
-//           <Paper key={staza.id} elevation={3} style={{ margin: '10px 0', padding: '10px' }}>
-//             <ListItem>
-//               <ListItemText
-//                 primary={staza.properties.naziv || 'N/A'}
-//                 secondary={`Težina: ${staza.properties.tezina || 'N/A'}, Dužina: ${staza.properties.duzina || 'N/A'}`}
-//               />
-//               <Button variant="contained" color="secondary" onClick={() => handleObrisiStazu(staza.id)}>
-//                 Obriši
-//               </Button>
-//               <Button variant="contained" color="primary" onClick={() => handlePregledStaze(staza.id)} style={{ marginLeft: '10px' }}>
-//                 Pregled staze
-//               </Button>
-//             </ListItem>
-//           </Paper>
-//         ))}
-//       </List>
-
-//       <Button variant="contained" color="primary" onClick={handleOpenDialog} style={{ marginTop: '10px' }}>
-//         Dodaj stazu
-//       </Button>
-
-//       <Button variant="contained" color="primary" onClick={handleOpenAktivnostDialog} style={{ marginTop: '10px', marginLeft: '10px' }}>
-//         Dodaj aktivnost
-//       </Button>
-
-//       <Link to="/Skijalista">
-//         <Button variant="contained" color="primary" style={{ marginTop: '10px', marginLeft: '10px' }}>
-//           Nazad na listu skijališta
-//         </Button>
-//       </Link>
-
-//       <Dialog open={openDialog} onClose={handleCloseDialog}>
-//         {/* ... (existing staza dialog code) */}
-//       </Dialog>
-
-//       <Dialog open={openAktivnostDialog} onClose={handleCloseAktivnostDialog}>
-//         <DialogTitle>Dodaj novu aktivnost</DialogTitle>
-//         <DialogContent>
-//           <TextField
-//             label="Naziv aktivnosti"
-//             name="naziv"
-//             value={novaAktivnost.naziv}
-//             onChange={handleAktivnostInputChange}
-//             fullWidth
-//             margin="normal"
-//           />
-//           <TextField
-//             label="Opis"
-//             name="opis"
-//             value={novaAktivnost.opis}
-//             onChange={handleAktivnostInputChange}
-//             fullWidth
-//             margin="normal"
-//           />
-//         </DialogContent>
-//         <DialogActions>
-//           <Button onClick={handleCloseAktivnostDialog} color="primary">
-//             Otkaži
-//           </Button>
-//           <Button onClick={handleDodajAktivnost} color="primary">
-//             Dodaj
-//           </Button>
-//         </DialogActions>
-//       </Dialog>
-
-      
-//     <Button variant="contained" color="primary" onClick={handleOpenRecommendationForm} style={{ marginTop: '10px' }}>
-//       Preporuči mi stazu
-//     </Button>
-
-//     <Dialog open={showRecommendationForm} onClose={handleCloseRecommendationForm}>
-//       <DialogTitle>Preporuči mi stazu</DialogTitle>
-//       <DialogContent>
-//         <TextField
-//           label="Nivo skijanja"
-//           name="skiingLevel"
-//           value={skiingLevel}
-//           onChange={handleSkiingLevelChange}
-//           fullWidth
-//           margin="normal"
-//         />
-//       </DialogContent>
-//       <DialogActions>
-//         <Button onClick={handleCloseRecommendationForm} color="primary">
-//           Otkaži
-//         </Button>
-//         <Button onClick={handleRecommendStaza} color="primary">
-//           Preporuči
-//         </Button>
-//       </DialogActions>
-//     </Dialog>
-
-//     {recommendedStaza && (
-//       <div>
-//         <Typography variant="h6" sx={{ marginTop: '25px' }} gutterBottom>
-//           <Divider>Preporučena staza</Divider>
-//         </Typography>
-//         <Divider />
-//         <Paper elevation={3} style={{ margin: '10px 0', padding: '10px' }}>
-//           <ListItemText
-//             primary={recommendedStaza.naziv || 'N/A'}
-//             secondary={`Težina: ${recommendedStaza.tezina || 'N/A'}, Dužina: ${recommendedStaza.duzina || 'N/A'}`}
-//           />
-//         </Paper>
-//       </div>
-//     )}
-
-
-//       <Typography variant="h6" sx={{ marginTop: '25px' }} gutterBottom>
-//         <Divider>Lista aktivnosti</Divider>
-//       </Typography>
-//       <Divider />
-//       <List>
-//         {aktivnosti.map((aktivnost) => (
-//           <Paper key={aktivnost.id} elevation={3} style={{ margin: '10px 0', padding: '10px' }}>
-//             <ListItem>
-//               <ListItemText
-//                 primary={aktivnost.properties.naziv || 'N/A'}
-//                 secondary={`Opis: ${aktivnost.properties.opis || 'N/A'}`}
-//               />
-//               <Button
-//                 variant="contained"
-//                 color="secondary"
-//                 onClick={() => handleObrisiAktivnost(aktivnost.id)}
-//                 style={{ marginLeft: '10px' }}
-//               >
-//                 Obriši
-//               </Button>
-//             </ListItem>
-//           </Paper>
-//         ))}
-//       </List>
-//     </div>
-//   );
-// };
-
-// export default Staze;
-
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import {
@@ -404,6 +13,8 @@ import {
   DialogContent,
   TextField,
   DialogActions,
+  Tabs,
+  Tab,
 } from '@mui/material';
 
 const Staze = () => {
@@ -420,6 +31,42 @@ const Staze = () => {
       lokacija: '',
     },
   });
+  const [openRecommendationForm, setOpenRecommendationForm] = useState(false);
+  const [skiingLevel, setSkiingLevel] = useState('');
+  const [recommendedStaze, setRecommendedStaze] = useState([]);
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+
+  const handleOpenRecommendationForm = () => {
+    setOpenRecommendationForm(true);
+  };
+
+  const handleCloseRecommendationForm = () => {
+    setOpenRecommendationForm(false);
+    setSkiingLevel('');
+  };
+
+  const handleRecommendStaze = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5030/api/Skijaliste/PreporukaStaza?nazivSkijalista=${naziv}&skiingLevel=${skiingLevel}`
+      );
+
+      if (!response.ok) {
+        throw new Error('Greška prilikom preporuke staza.');
+      }
+
+      const data = await response.json();
+      console.log('Recommended Staze:', data);
+
+      setRecommendedStaze(data);
+      setSelectedTabIndex(0); // Reset selected tab index
+      handleCloseRecommendationForm();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const [editStaza, setEditStaza] = useState(null);
 
   const fetchStaze = async () => {
     try {
@@ -475,6 +122,7 @@ const Staze = () => {
 
   const handleCloseForm = () => {
     setOpenForm(false);
+    setEditStaza(null); // Clear editStaza state when closing the form
   };
 
   const handleDodajStazu = async () => {
@@ -498,6 +146,26 @@ const Staze = () => {
     }
   };
 
+  const handleIzmeniStazu = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5030/api/Staza/AzurirajStazu?naziv=${editStaza.naziv}&tezina=${editStaza.tezina}&duzina=${editStaza.duzina}`,
+        {
+          method: 'PUT',
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Greška prilikom ažuriranja staze.');
+      }
+
+      fetchStaze();
+      handleCloseForm();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div>
       <Divider variant="fullWidth" sx={{ mb: 2 }} />
@@ -505,9 +173,7 @@ const Staze = () => {
         <Divider>Staze za skijalište: {naziv}</Divider>
       </Typography>
 
-      <Button variant="outlined" color="primary" onClick={handleOpenForm} sx={{ mb: 2 }}>
-        Dodaj stazu
-      </Button>
+      
 
       {loading ? (
         <CircularProgress />
@@ -530,9 +196,24 @@ const Staze = () => {
                     variant="outlined"
                     color="error"
                     onClick={() => handleObrisiStazu(staza.properties.naziv)}
-                    sx={{ mt: 2 }}
+                    sx={{ mt: 2, mr: 2 }}
                   >
                     Obriši
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => {
+                      setEditStaza({
+                        naziv: staza.properties.naziv,
+                        tezina: staza.properties.tezina,
+                        duzina: staza.properties.duzina,
+                      });
+                      setOpenForm(true);
+                    }}
+                    sx={{ mt: 2 }}
+                  >
+                    Izmeni
                   </Button>
                 </CardContent>
               </Card>
@@ -541,28 +222,109 @@ const Staze = () => {
         </Grid>
       )}
 
-      <Dialog open={openForm} onClose={handleCloseForm}>
-        <DialogTitle>Dodaj novu stazu</DialogTitle>
+      <Button variant="outlined" color="primary" onClick={handleOpenForm} sx={{ mb: 2, marginTop: '30px', marginRight: '20px' }}>
+        Dodaj stazu
+      </Button>
+      <Button variant="outlined" color="primary" onClick={handleOpenRecommendationForm} sx={{ mb: 2 , marginTop: '30px' }}>
+        Preporuka staza
+      </Button>
+
+
+      <Dialog open={openRecommendationForm} onClose={handleCloseRecommendationForm}>
+        <DialogTitle>Preporuka staza</DialogTitle>
         <DialogContent>
+          <TextField label="Naziv skijališta" value={naziv} fullWidth margin="normal" disabled />
           <TextField
-            label="Naziv staze"
-            value={novaStaza.naziv}
-            onChange={(e) => setNovaStaza({ ...novaStaza, naziv: e.target.value })}
+            label="Nivo skijanja"
+            value={skiingLevel}
+            onChange={(e) => setSkiingLevel(e.target.value)}
             fullWidth
             margin="normal"
           />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseRecommendationForm} color="secondary">
+            Odustani
+          </Button>
+          <Button onClick={handleRecommendStaze} color="primary">
+            Preporuči staze
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {recommendedStaze.length > 0 && (
+        <div>
+          <Divider variant="fullWidth" sx={{ my: 2 }} />
+          <Typography variant="h6" sx={{ marginTop: '25px' }} gutterBottom>
+            <Divider>Preporučene staze</Divider>
+          </Typography>
+
+          <Tabs
+            value={selectedTabIndex}
+            onChange={(event, newValue) => setSelectedTabIndex(newValue)}
+            indicatorColor="primary"
+            textColor="primary"
+            sx={{ marginBottom: 2 }}
+          >
+            {recommendedStaze.map((staza, index) => (
+              <Tab key={index} label={`Staza ${index + 1}`} />
+            ))}
+          </Tabs>
+
+          {recommendedStaze.map((staza, index) => (
+            <div key={index} hidden={selectedTabIndex !== index}>
+              <Card elevation={3} sx={{ mt: 2 }}>
+                <CardContent>
+                  <Typography variant="body2">
+                    Naziv staze: {staza.properties.naziv}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                    Težina staze: {staza.properties.tezina}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Dužina staze: {staza.properties.duzina} metara
+                  </Typography>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <Dialog open={openForm} onClose={handleCloseForm}>
+        <DialogTitle>{editStaza ? 'Izmeni stazu' : 'Dodaj novu stazu'}</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Naziv staze"
+            value={editStaza ? editStaza.naziv : novaStaza.naziv}
+            onChange={(e) =>
+              editStaza
+                ? setEditStaza({ ...editStaza, naziv: e.target.value })
+                : setNovaStaza({ ...novaStaza, naziv: e.target.value })
+            }
+            fullWidth
+            margin="normal"
+            disabled={editStaza !== null} // Disable if editing an existing staza
+          />
           <TextField
             label="Težina staze"
-            value={novaStaza.tezina}
-            onChange={(e) => setNovaStaza({ ...novaStaza, tezina: e.target.value })}
+            value={editStaza ? editStaza.tezina : novaStaza.tezina}
+            onChange={(e) =>
+              editStaza
+                ? setEditStaza({ ...editStaza, tezina: e.target.value })
+                : setNovaStaza({ ...novaStaza, tezina: e.target.value })
+            }
             fullWidth
             margin="normal"
           />
           <TextField
             label="Dužina staze"
             type="number"
-            value={novaStaza.duzina}
-            onChange={(e) => setNovaStaza({ ...novaStaza, duzina: e.target.value })}
+            value={editStaza ? editStaza.duzina : novaStaza.duzina}
+            onChange={(e) =>
+              editStaza
+                ? setEditStaza({ ...editStaza, duzina: e.target.value })
+                : setNovaStaza({ ...novaStaza, duzina: e.target.value })
+            }
             fullWidth
             margin="normal"
           />
@@ -571,8 +333,8 @@ const Staze = () => {
           <Button onClick={handleCloseForm} color="secondary">
             Odustani
           </Button>
-          <Button onClick={handleDodajStazu} color="primary">
-            Dodaj stazu
+          <Button onClick={editStaza ? handleIzmeniStazu : handleDodajStazu} color="primary">
+            {editStaza ? 'Izmeni stazu' : 'Dodaj stazu'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -581,7 +343,3 @@ const Staze = () => {
 };
 
 export default Staze;
-
-
-
-

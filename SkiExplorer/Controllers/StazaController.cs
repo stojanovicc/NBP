@@ -164,36 +164,36 @@ namespace SkiExplorer.Controllers
 
 
         //radi
-        // [HttpGet("PreuzmiStaze")]
-        // public async Task<IActionResult> PreuzmiStaze()
-        // {
-        //     try
-        //     {
-        //         using (var session = _driver.AsyncSession())
-        //         {
-        //             var result = await session.ExecuteReadAsync(async tx =>
-        //             {
-        //                 var query = "MATCH (s:Staza) RETURN s";
-        //                 var cursor = await tx.RunAsync(query);
-        //                 var nodes = new List<INode>();
+        [HttpGet("PreuzmiStaze")]
+        public async Task<IActionResult> PreuzmiStaze()
+        {
+            try
+            {
+                using (var session = _driver.AsyncSession())
+                {
+                    var result = await session.ExecuteReadAsync(async tx =>
+                    {
+                        var query = "MATCH (s:Staza) RETURN s";
+                        var cursor = await tx.RunAsync(query);
+                        var nodes = new List<INode>();
 
-        //                 await cursor.ForEachAsync(record =>
-        //                 {
-        //                     var node = record["s"].As<INode>();
-        //                     nodes.Add(node);
-        //                 });
+                        await cursor.ForEachAsync(record =>
+                        {
+                            var node = record["s"].As<INode>();
+                            nodes.Add(node);
+                        });
 
-        //                 return nodes;
-        //             });
+                        return nodes;
+                    });
 
-        //             return Ok(result);
-        //         }
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return BadRequest(ex.Message);
-        //     }
-        // }
+                    return Ok(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
 
     }

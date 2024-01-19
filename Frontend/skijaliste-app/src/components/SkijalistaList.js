@@ -5,7 +5,9 @@ import { useNavigate } from 'react-router-dom';
 const SkijalistaList = () => {
   const [skijalista, setSkijalista] = useState([]);
   const [formData, setFormData] = useState({ naziv: '', lokacija: '' });
-  const navigate = useNavigate(); 
+  const [editFormData, setEditFormData] = useState({ naziv: '', lokacija: '' });
+  const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -22,7 +24,11 @@ const SkijalistaList = () => {
   };
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (isEditing) {
+      setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
   };
 
   const handleDodajClick = async () => {
@@ -62,33 +68,64 @@ const SkijalistaList = () => {
     }
   };
 
+  const handleIzmeniClick = (skijalisteNaziv, skijalisteLokacija) => {
+    setEditFormData({ naziv: skijalisteNaziv, lokacija: skijalisteLokacija });
+    setIsEditing(true);
+  };
+
+  const handleSacuvajIzmene = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5030/api/Skijaliste/AzurirajSkijaliste?naziv=${editFormData.naziv}&lokacija=${editFormData.lokacija}`,
+        {
+          method: 'PUT',
+        }
+      );
+
+      if (response.ok) {
+        fetchData();
+        setEditFormData({ naziv: '', lokacija: '' });
+        setIsEditing(false);
+      } else {
+        console.error('Error updating skijalište:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error updating skijalište:', error);
+    }
+  };
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <Paper>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Dodaj skijalište
+              {isEditing ? 'Izmeni skijalište' : 'Dodaj skijalište'}
             </Typography>
             <form>
               <TextField
                 label="Naziv"
                 name="naziv"
-                value={formData.naziv}
+                value={isEditing ? editFormData.naziv : formData.naziv}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                disabled={isEditing}
               />
               <TextField
                 label="Lokacija"
                 name="lokacija"
-                value={formData.lokacija}
+                value={isEditing ? editFormData.lokacija : formData.lokacija}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
               />
-              <Button variant="contained" color="primary" onClick={handleDodajClick}>
-                Dodaj
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={isEditing ? handleSacuvajIzmene : handleDodajClick}
+              >
+                {isEditing ? 'Sačuvaj izmene' : 'Dodaj'}
               </Button>
             </form>
           </CardContent>
@@ -119,15 +156,24 @@ const SkijalistaList = () => {
                   variant="outlined"
                   color="secondary"
                   onClick={() => handleObrisiClick(skijaliste.properties.naziv)}
+                  sx={{ marginRight: '10px' }}
                 >
                   Obriši
                 </Button>
                 <Button
                   variant="outlined"
                   color="primary"
+                  onClick={() => handleIzmeniClick(skijaliste.properties.naziv, skijaliste.properties.lokacija)}
+                  sx={{ marginRight: '10px' }}
+                >
+                  Izmeni
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="info"
                   onClick={() => navigate(`/Skijaliste/${skijaliste.properties.naziv}`)}
                 >
-                  PREGLED SKIJALISTA
+                  Pregled skijališta
                 </Button>
               </CardContent>
             </Card>
@@ -139,4 +185,3 @@ const SkijalistaList = () => {
 };
 
 export default SkijalistaList;
-
