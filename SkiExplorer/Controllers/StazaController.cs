@@ -161,8 +161,6 @@ namespace SkiExplorer.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
         //radi
         [HttpGet("PreuzmiStaze")]
         public async Task<IActionResult> PreuzmiStaze()
@@ -195,6 +193,33 @@ namespace SkiExplorer.Controllers
             }
         }
 
+        [HttpGet("PretraziStaze")]
+        public async Task<IActionResult> PretraziStaze(string pojam)
+        {
+            try
+            {
+                var cql = $@"SELECT * FROM Staza WHERE naziv = ?";
 
+                var result = await CassandraDB.ExecuteAsync(new SimpleStatement(cql).Bind(pojam));
+
+                var staza = result.Select(row => new Staza
+                {
+                    Naziv = row.GetValue<string>("naziv"),
+                    Tezina = row.GetValue<string>("tezina"),
+                    Duzina = row.GetValue<float>("duzina"),
+                    Skijaliste = new Skijaliste
+                    {
+                        Naziv = row.GetValue<string>("skijaliste_naziv"),
+                        Lokacija = row.GetValue<string>("lokacija"),
+                    }
+                }).ToList();
+
+                return Ok(staza);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Greška: {ex.Message}");
+            }
+        }
     }
 }
