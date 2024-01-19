@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 
 const Staze = () => {
+  
   const { naziv } = useParams();
   const [staze, setStaze] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +41,7 @@ const Staze = () => {
     cena: 0,
     skijaliste: {
       naziv: naziv,
-      lokacija: '', // Ako imate informaciju o lokaciji, popunite je ovde
+      lokacija: '', 
     },
   });
 
@@ -56,19 +57,52 @@ const Staze = () => {
       cena: 0,
       skijaliste: {
         naziv: naziv,
-        lokacija: '', // Ako imate informaciju o lokaciji, popunite je ovde
+        lokacija: '', 
       },
     });
   };
   
+  // const handleDodajAktivnost = async () => {
+  //   try {
+  //     const response = await fetch('http://localhost:5030/api/Aktivnosti/DodajAktivnost', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(novaAktivnost),
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error('Greška prilikom dodavanja nove aktivnosti.');
+  //     }
+  
+  //     fetchAktivnosti();
+  //     handleCloseFormDodaj();
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
   const handleDodajAktivnost = async () => {
     try {
+      const lokacijaSkijalista = await getLokacijaSkijalista(naziv);
+      console.log('Lokacija skijališta:', lokacijaSkijalista);
+  
+      const novaAktivnostSaLokacijom = {
+        ...novaAktivnost,
+        skijaliste: {
+          naziv: naziv,
+          lokacija: lokacijaSkijalista,
+        },
+      };
+      console.log('Nova aktivnost sa lokacijom:', novaAktivnostSaLokacijom);
+  
       const response = await fetch('http://localhost:5030/api/Aktivnosti/DodajAktivnost', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(novaAktivnost),
+        body: JSON.stringify(novaAktivnostSaLokacijom),
       });
   
       if (!response.ok) {
@@ -81,6 +115,7 @@ const Staze = () => {
       console.error(error);
     }
   };
+  
   const [editAktivnost, setEditAktivnost] = useState(null);
   const [openFormIzmeni, setOpenFormIzmeni] = useState(false);
   
@@ -263,27 +298,84 @@ const Staze = () => {
     setEditStaza(null); // Clear editStaza state when closing the form
   };
 
+  // const handleDodajStazu = async () => {
+  //   try {
+  //     const response = await fetch('http://localhost:5030/api/Staza/DodajStazu', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(novaStaza),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error('Greška prilikom dodavanja nove staze.');
+  //     }
+
+  //     fetchStaze();
+  //     handleCloseForm();
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  const getLokacijaSkijalista = async (nazivSkijalista) => {
+    try {
+      const response = await fetch(`http://localhost:5030/api/Skijaliste/PreuzmiSkijaliste?nazivSkijalista=${nazivSkijalista}`);
+  
+      if (!response.ok) {
+        throw new Error('Greška prilikom dohvatanja informacija o skijalištu.');
+      }
+  
+      const data = await response.json();
+      
+      console.log('Odgovor sa servera:', data);
+      const prvaLokacija = data[0]?.properties?.lokacija;
+  
+      if (!prvaLokacija) {
+        throw new Error('Lokacija skijališta nije dostupna u odgovoru.');
+      }
+  
+      return prvaLokacija;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Došlo je do greške prilikom dohvatanja lokacije skijališta.');
+    }
+  };
+  
   const handleDodajStazu = async () => {
     try {
+      const lokacijaSkijalista = await getLokacijaSkijalista(naziv);
+      console.log('Lokacija skijališta:', lokacijaSkijalista);
+  
+      const novaStazaSaLokacijom = {
+        ...novaStaza,
+        skijaliste: {
+          naziv: naziv,
+          lokacija: lokacijaSkijalista,
+        },
+      };
+      console.log('Nova staza sa lokacijom:', novaStazaSaLokacijom);
+  
       const response = await fetch('http://localhost:5030/api/Staza/DodajStazu', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(novaStaza),
+        body: JSON.stringify(novaStazaSaLokacijom),
       });
-
+  
       if (!response.ok) {
         throw new Error('Greška prilikom dodavanja nove staze.');
       }
-
+  
       fetchStaze();
       handleCloseForm();
     } catch (error) {
       console.error(error);
     }
   };
-
+  
   const handleIzmeniStazu = async () => {
     try {
       const response = await fetch(
