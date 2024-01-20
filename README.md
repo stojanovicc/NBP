@@ -4,8 +4,9 @@
   - Anđela Stojanović, 18406
   - Anastasija Trajković. 18456
 
-> # Clone repository
-> git clone 
+# Clone repository
+ git clone https://github.com/stojanovicc/NBP.git
+ cd NBP
 
 # Cassandra
 1. Korak: pokrenuti Cassandru
@@ -23,7 +24,7 @@
 - password: anastasijaandjela
 
 # Server start
-  - cd ../SkiExplorer
+  - cd ../NBP/SkiExplorer
   - dotnet watch run
 
 # Client start
