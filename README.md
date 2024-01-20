@@ -34,6 +34,8 @@
   - npm install @mui/icons-material
   - npm start
 
+**NAPOMENA:** ukoliko ne bude bilo moguće startovati Client-a, samo instalirajte ono za šta izbacuje grešku!
+
 # BITAN DODATAK DA BI SE APLIKACIJA USPEŠNO IZVRŠILA
 **1. Težina staze**
     - unos težine staze treba biti **plava**, **crna** ili **crvena** !
