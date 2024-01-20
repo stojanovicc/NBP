@@ -4,6 +4,9 @@
   - Anđela Stojanović, 18406
   - Anastasija Trajković. 18456
 
+> # Clone repository
+> git clone 
+
 # Cassandra
 1. Korak: pokrenuti Cassandru
 2. Korak: USE my_keyspace;
