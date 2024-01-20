@@ -34,11 +34,11 @@
 
 # BITAN DODATAK DA BI SE APLIKACIJA USPEŠNO IZVRŠILA
 1. Težina staze
-  - unos težine staze treba biti plava, crna ili crvena !
+    - unos težine staze treba biti plava, crna ili crvena !
     
 2. Funkcija Preporuka Staza
-  - kada se testira ova funkcija neophodno je da NIVO SKIJANJA bude nizak, srednji ili visok, kako bi se korisniku preporučila adekvatna staza na osnovu njegovog nivoa skijanja.
-  - nizak nivo je za plavu, srednji za crvenu, a visok za crnu stazu !
+    - kada se testira ova funkcija neophodno je da NIVO SKIJANJA bude nizak, srednji ili visok, kako bi se korisniku preporučila adekvatna staza na osnovu njegovog nivoa skijanja.
+    - nizak nivo je za plavu, srednji za crvenu, a visok za crnu stazu !
 
 3. Promena vremenske prognoze
-  - kada bi se videla promena vremenske potrebno je u formi zatražiti prikaz te vremenske sa željenim datumom, iz razloga što je zamišljeno da se vremenska iz sekunde u sekundu menja, i nema potrebe za osvežavanjem vć prikazane vremenske.
+    - kada bi se videla promena vremenske potrebno je u formi zatražiti prikaz te vremenske sa željenim datumom, iz razloga što je zamišljeno da se vremenska iz sekunde u sekundu menja, i nema potrebe za osvežavanjem vć prikazane vremenske.
