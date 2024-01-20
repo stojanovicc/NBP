@@ -1,7 +1,7 @@
 # Napredne Baze Podataka: SkiExplorer - Neo4j + Cassandra
 
 #  Contributors (Student, Br.Indeksa)
-  - Andđela Stojanović, 18406
+  - Anđela Stojanović, 18406
   - Anastasija Trajković. 18456
 
 # Cassandra
