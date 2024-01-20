@@ -396,6 +396,11 @@ const Staze = () => {
     }
   };
 
+  const handleRecenzijeClick = (nazivStaze) => {
+    const recenzijePath = `/Skijaliste/${naziv}/${nazivStaze}/Recenzije`;
+    navigate(recenzijePath);
+  };
+
 
   return (
     <div>
@@ -445,6 +450,14 @@ const Staze = () => {
                     sx={{ mt: 2 }}
                   >
                     Izmeni
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleRecenzijeClick(staza.properties.naziv)}
+                    sx={{ mt: 2, ml: 2 }}
+                  >
+                    Recenzije
                   </Button>
                 </CardContent>
               </Card>
