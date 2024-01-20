@@ -1,5 +1,8 @@
 # Napredne Baze Podataka: SkiExplorer - Neo4j + Cassandra
-Pokretanje aplikacije SkiExplorer:
+
+#  Contributors (Student, Br.Indeksa)
+  - Andđela Stojanović, 18406
+  - Anastasija Trajković. 18456
 
 # Cassandra
 1. Korak: pokrenuti Cassandru
