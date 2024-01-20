@@ -10,7 +10,9 @@
 
 # Cassandra
 **1. Korak:** pokrenuti Cassandru
+
 **2. Korak:** USE my_keyspace;
+
 **3. Korak:** Kreirati sledece tabele u Cassandri
     - CREATE TABLE Skijaliste(naziv TEXT PRIMARY KEY, lokacija TEXT);
     - CREATE TABLE Staza(naziv TEXT PRIMARY KEY, tezina TEXT, duzina FLOAT, skijaliste_naziv TEXT, lokacija TEXT);
