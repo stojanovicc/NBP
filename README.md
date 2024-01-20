@@ -33,8 +33,8 @@
   - npm start
 
 # BITAN DODATAK DA BI SE APLIKACIJA USPEŠNO IZVRŠILA
-# Težina staze
+Težina staze
 - Unos težine staze treba biti plava, crna ili crvena !
-# Funkcija Preporuka Staza
+Funkcija Preporuka Staza
 - kada se testira ova funkcija neophodno je da NIVO SKIJANJA bude nizak, srednji ili visok, kako bi se korisniku preporučila adekvatna staza na osnovu njegovog nivoa skijanja.
 - nizak nivo je za plavu, srednji za crvenu, a visok za crnu stazu !
