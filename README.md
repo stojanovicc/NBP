@@ -2,7 +2,7 @@
 
 #  Contributors (Student, Br.Indeksa)
   - Anđela Stojanović, 18406
-  - Anastasija Trajković. 18456
+  - Anastasija Trajković, 18456
 
 # Clone repository
  - git clone https://github.com/stojanovicc/NBP.git
