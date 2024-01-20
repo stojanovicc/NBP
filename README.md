@@ -17,9 +17,9 @@ username: neo4j
 password: anastasijaandjela
 
 # Server start
-cd ../SkiExplorer
-dotnet watch run
+  cd ../SkiExplorer
+  dotnet watch run
 
 # Client start
-npm install
-npm start
+  npm install
+  npm start
