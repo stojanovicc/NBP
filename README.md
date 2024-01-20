@@ -12,14 +12,14 @@ Pokretanje aplikacije SkiExplorer:
   - CREATE TABLE VremenskaPrognoza(datum TEXT, temperatura INT, uvindex INT, brzinavetra FLOAT, vlaznostvazduha INT, padavine TEXT, pritisak FLOAT, skijaliste TEXT, PRIMARY KEY(datum, skijaliste));
 
 # Neo4J
-http://localhost:7474/browser/
-username: neo4j
-password: anastasijaandjela
+- http://localhost:7474/browser/
+- username: neo4j
+- password: anastasijaandjela
 
 # Server start
-  cd ../SkiExplorer
-  dotnet watch run
+  - cd ../SkiExplorer
+  - dotnet watch run
 
 # Client start
-  npm install
-  npm start
+  - npm install
+  - npm start
