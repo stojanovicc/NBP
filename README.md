@@ -43,4 +43,4 @@
     - nizak nivo je za plavu, srednji za crvenu, a visok za crnu stazu !
 
 **3. Promena vremenske prognoze**
-    - kada bi se videla promena vremenske potrebno je u formi zatražiti prikaz te vremenske sa željenim datumom, iz razloga što je zamišljeno da se vremenska iz sekunde u sekundu menja, i nema potrebe za osvežavanjem vć prikazane vremenske.
+    - kako bi se videla promena vremenske potrebno je u formi zatražiti prikaz te vremenske sa željenim datumom, iz razloga što je zamišljeno da se vremenska iz sekunde u sekundu menja, i nema potrebe za osvežavanjem već prikazane vremenske.
