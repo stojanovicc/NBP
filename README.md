@@ -5,8 +5,8 @@
   - Anastasija Trajković. 18456
 
 # Clone repository
- > git clone https://github.com/stojanovicc/NBP.git
- > cd NBP
+ - git clone https://github.com/stojanovicc/NBP.git
+ - cd NBP
 
 # Cassandra
 1. Korak: pokrenuti Cassandru
