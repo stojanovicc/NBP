@@ -4,6 +4,12 @@
   - Anđela Stojanović, 18406
   - Anastasija Trajković, 18456
 
+# Stack
+ - Cassandra
+ - Neo4J
+ - Asp.net WebApi
+ - React(JS)
+
 # Clone repository
  - git clone https://github.com/stojanovicc/NBP.git
  - cd NBP
